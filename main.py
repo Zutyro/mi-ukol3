@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from matplotlib.ticker import FuncFormatter
+import multiprocessing
 
 
 def test_domain(point_values, domain):
@@ -106,28 +107,6 @@ def search(max_iterations: int, dimensions: int, population: int, standard_devia
             convergence_results.append(convergence_results[len(convergence_results) - 1])
             convergence_points.append(convergence_points[len(convergence_points) - 1])
     return convergence_results
-    # fig, ax = 0,0
-    # if dimensions == 2:
-    #     fig, ax = plt.subplots(3)
-    #     climb_points = np.array(climb_points).T
-    #     xx,yy = np.meshgrid(np.linspace(domain[0],domain[1],500), np.linspace(domain[0],domain[1],500))
-    #     zz = test_function((xx,yy))
-    #
-    #     ax[2].pcolor(xx, yy, zz)
-    #     ax[2].scatter(climb_points[0],climb_points[1],color='Red')
-    # else:
-    #     fig, ax = plt.subplots(2)
-    # step = ax[1].step(convergence_iteration,convergence_results)
-    # fig.set_figheight(8)
-    # fig.set_figwidth(8)
-    # data = [['Minimum:',convergence_results[len(convergence_results)-1]],['Parametry:', convergence_points[len(convergence_points)-1]]]
-    # table = ax[0].table(cellText=data, colWidths = [0.15, 0.25], loc='center')
-    # table.set_fontsize(14)
-    # table.scale(3, 3)
-    # ax[0].axis('off')
-    # fig.suptitle(f'Search alg:{search_alg.upper()}\nDimensions:{dimensions}, Population:{population}, STD:{standard_deviation},\nTest function:{function_name}\nIterations:{len(climb_points)}')
-    # plt.show()
-    # print(f'Best result:{convergence_results[len(convergence_results)-1]} in {convergence_points[len(convergence_points)-1]}')
 
 
 def simulated_annealing(temp0: int,tempF: int, dimensions: int, population: int, standard_deviation: float, function_type: int):
@@ -291,17 +270,62 @@ def stat_analysis(averaging_count,test_function,std,dimension,population):
     ax[1].set_yscale('log')
     formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
     ax[1].yaxis.set_major_formatter(formatter)
-    ax[1].yaxis.set_minor_formatter(formatter)
+    # ax[1].yaxis.set_minor_formatter(formatter)
     ax[1].legend()
+    fig.suptitle(f'Test_function: {test_function}, Dimensions: {dimension}, Population: {population}, {averaging_count} of averaged runs')
     plt.show()
 
 if __name__=='__main__':
-
-    averaging_count = 2
-    test_function = 2
+    # stat_analysis(averaging_count, test_function, std, dimension, population)
+    averaging_count = 30
+    test_function = 0
     std = 0.5
     dimension = 5
     population = 50
+    sphere5 = multiprocessing.Process(target=stat_analysis,
+                                      args=(averaging_count, test_function, std, dimension, population))
+    sphere5.start()
 
+    dimension = 10
+    sphere10 = multiprocessing.Process(target=stat_analysis,
+                                      args=(averaging_count, test_function, std, dimension, population))
+    sphere10.start()
 
-    stat_analysis(averaging_count, test_function, std, dimension, population)
+    dimension = 20
+    sphere20 = multiprocessing.Process(target=stat_analysis,
+                                      args=(averaging_count, test_function, std, dimension, population))
+    sphere20.start()
+
+    test_function = 1
+    std = 20
+    dimension = 5
+    schwefel5 = multiprocessing.Process(target=stat_analysis,
+                                      args=(averaging_count, test_function, std, dimension, population))
+    schwefel5.start()
+
+    dimension = 10
+    schwefel10 = multiprocessing.Process(target=stat_analysis,
+                                        args=(averaging_count, test_function, std, dimension, population))
+    schwefel10.start()
+
+    dimension = 20
+    schwefel20 = multiprocessing.Process(target=stat_analysis,
+                                        args=(averaging_count, test_function, std, dimension, population))
+    schwefel20.start()
+
+    test_function = 2
+    std = 0.5
+    dimension = 5
+    dixonprice5 = multiprocessing.Process(target=stat_analysis,
+                                        args=(averaging_count, test_function, std, dimension, population))
+    dixonprice5.start()
+
+    dimension = 10
+    dixonprice10 = multiprocessing.Process(target=stat_analysis,
+                                          args=(averaging_count, test_function, std, dimension, population))
+    dixonprice10.start()
+
+    dimension = 20
+    dixonprice20 = multiprocessing.Process(target=stat_analysis,
+                                          args=(averaging_count, test_function, std, dimension, population))
+    dixonprice20.start()
